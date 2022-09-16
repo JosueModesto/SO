@@ -4,7 +4,9 @@ import socket
 if __name__ == '__main__':
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((socket.gethostname(), 1235))
+    s.connect(("127.0.0.1", 1235))
+    #s.connect((socket.gethostname(), 1235))
+
 
     event = 0
     while event != '2':
@@ -14,8 +16,9 @@ if __name__ == '__main__':
         if event == '1':
             s.send(bytes('data', 'utf-8'))
             msg = s.recv(1024).decode('utf-8')
-            freq, n_proc, mem = msg.split('|')
-            print(f'\nFrequência (GHz): {freq}')
+            n_proc, mem = msg.split('|')
+            #freq, n_proc, mem = msg.split('|')
+            #print(f'\nFrequência (GHz): {freq}')
             print(f'Número de processadores: {n_proc}')
             print(f'Tamanho de memória (GiB): {int(eval(mem) / 10e5)}\n')
         elif event == '2':

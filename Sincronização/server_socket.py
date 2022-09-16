@@ -6,7 +6,8 @@ from time import sleep
 if __name__ == '__main__':
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((socket.gethostname(), 1235))
+    s.bind(("127.0.0.1", 1235))
+    #s.bind((socket.gethostname(), 1235))   
     s.listen(5)
 
     client, addr = s.accept()
@@ -22,11 +23,13 @@ if __name__ == '__main__':
             texto_mem = arq_mem.readlines()
             n_proc = 0
             for linha in texto_cpu:
-                if 'model name' in linha:
-                    info_freq = re.search(r'@ (?P<f>\d.+)GHz', linha)
+                #if 'model name' in linha:
+                    # info_freq = re.search(r'@ (?P<f>\d.+)GHz', linha)
+                    #info_freq = re.search(r'cpu\ MHz.+?$', linha)
+                    #print(info_freq.group())
                 if 'processor' in linha:
                     info_n_proc = re.search(r'processor.+?(?P<p>\d{1,2})', linha)
-            freq = info_freq.group('f')
+            #freq = info_freq.group('f')
             n_proc = str(int(info_n_proc.group('p')) + 1)
             for linha in texto_mem:
                 if 'MemTotal' in linha:
@@ -34,5 +37,6 @@ if __name__ == '__main__':
             mem = str(int(info_mem.group('m')) / 1024 * 1024)
             print(f'Servidor enviando informações para {addr[0]}')
             # sleep(1)
-            client.send(bytes(f'{freq}|{n_proc}|{mem}', 'utf-8'))
+            #client.send(bytes(f'{freq}|{n_proc}|{mem}', 'utf-8'))
+            client.send(bytes(f'{n_proc}|{mem}', 'utf-8'))
     client.close()
