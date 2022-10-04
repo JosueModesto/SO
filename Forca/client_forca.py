@@ -46,6 +46,7 @@ def marca_chute_correto(chute, letras_acertadas, palavra_secreta):
         if (chute == letra):
             letras_acertadas[index] = letra
         index += 1
+        client.send('acertei uma letra')
 
 def imprime_mensagem_vencedor():
     
@@ -80,6 +81,7 @@ def imprime_mensagem_perdedor(palavra_secreta):
     print("   \_             _/       ")
     print("     \_         _/         ")
     print("       \_______/           ")
+
 def desenha_forca(erros):
     print("  _______     ")
     print(" |/      |    ")
@@ -160,6 +162,7 @@ def jogar():
             print('Ainda faltam acertar {} letras'.format(letras_faltando))
             print('Você ainda tem {} tentativas'.format(7-erros))
             desenha_forca(erros)
+            client.send('errei uma letra')
 
         enforcou = erros == 7
         client.send('morri')
@@ -169,10 +172,10 @@ def jogar():
 
     if (acertou):
         msg = client.recv(1024).decode('ascii')
-        if msg == imprime_mensagem_vencedor: 
-            imprime_mensagem_vencedor
+        if msg == 'imprime_mensagem_vencedor': 
+            imprime_mensagem_vencedor()
         else:
-            imprime_mensagem_perdedor
+            imprime_mensagem_perdedor()
 
     print("Fim do jogo")
     
