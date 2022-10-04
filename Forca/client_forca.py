@@ -2,6 +2,8 @@ from threading import Thread, Lock
 import socket
 import random
 
+from server_forca import imprime_mensagem_perdedor, imprime_mensagem_vencedor
+
 ServerIP = input("Server IP: ")
 PORT = int(input("Port: "))
 
@@ -58,7 +60,7 @@ def imprime_mensagem_vencedor():
     print("           ) (          ")
     print("         _.' '._        ")
     print("        '-------'       ")
-
+        
 def imprime_mensagem_perdedor(palavra_secreta):
     print("Puxa, você foi enforcado!")
     print("A palavra era {}".format(palavra_secreta))
@@ -78,7 +80,6 @@ def imprime_mensagem_perdedor(palavra_secreta):
     print("   \_             _/       ")
     print("     \_         _/         ")
     print("       \_______/           ")
-
 def desenha_forca(erros):
     print("  _______     ")
     print(" |/      |    ")
@@ -151,6 +152,7 @@ def jogar():
             marca_chute_correto(chute, letras_acertadas, palavra_secreta)
             letras_faltando = str(letras_acertadas.count('_'))
             if (letras_faltando == "0"):
+                client.send('terminei')
                 print("PARABÉNS!! Você encontrou todas as letras formando a palavra '{}'".format(palavra_secreta.upper()))
         else:
             erros += 1
@@ -160,14 +162,17 @@ def jogar():
             desenha_forca(erros)
 
         enforcou = erros == 7
+        client.send('morri')
         acertou = "_" not in letras_acertadas
 
         print(letras_acertadas)
 
     if (acertou):
-        imprime_mensagem_vencedor()
-    else:
-        imprime_mensagem_perdedor(palavra_secreta)
+        msg = client.recv(1024).decode('ascii')
+        if msg == imprime_mensagem_vencedor: 
+            imprime_mensagem_vencedor
+        else:
+            imprime_mensagem_perdedor
 
     print("Fim do jogo")
     
